@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 using static Assets.Serialization.Utilities;
 
 //
@@ -71,10 +72,12 @@ namespace Assets.Serialization
         /// </summary>
         /// <param name="o">Object to serialize</param>
         Dictionary<object, int> WriteHash = new Dictionary<object, int>();
+        int serialNum = 0;
+
         private void WriteComplexObject(object o)
         {
             //throw new NotImplementedException("Fill me in");
-            int serialNum = 0;
+            
             
             if (WriteHash.ContainsKey(o)) {
                 //WriteObject(o);
@@ -82,9 +85,32 @@ namespace Assets.Serialization
             } else {
                 WriteHash.Add(o, serialNum);
                 serialNum++;
-                Writer.Write("#" + WriteHash[o]);
-                Writer.Write(Utilities.SerializedFields(o));
-                //Writer.Write("{ type:" + "\"" + o.GetType() + "");
+
+                string longTypename = o.GetType().ToString();
+                string[] parts = longTypename.Split('.');
+                string TypeLastWord = parts[parts.Length - 1];
+
+                Writer.Write("#" + WriteHash[o] + " {\n" + "type: \"" + TypeLastWord + "\",\n");
+        
+                IEnumerable<KeyValuePair<string, object>> tuples = Utilities.SerializedFields(o);
+                int count = 0;
+                foreach (var element in tuples)
+                {
+                    count++;
+                }
+                int index = 0;
+                foreach (var element in tuples)
+                {
+                    Writer.Write(element.Key + ": ");
+                    WriteObject(element.Value);
+                    //Debug.Log(element.Key + ":" + element.Value);
+                    if (index < count - 1)
+                        Writer.Write(",\n");
+                    else Writer.Write("\n");
+                    index++;
+                }
+
+                Writer.Write(" }");
             }
 
 
@@ -138,7 +164,9 @@ namespace Assets.Serialization
         /// </summary>
         /// <param name="enclosingId">Object id of the object this expression appears inside of, if any.</param>
         /// <returns>The object referred to by this #id expression.</returns>
-        Dictionary<int, string> ReadHash = new Dictionary<int, string>();
+
+        //Dictionary<int, string> ReadHash = new Dictionary<int, string>();
+        Dictionary<int, object> ReadHash = new Dictionary<int, object>();
 
         private object ReadComplexObject(int enclosingId)
         {
@@ -148,7 +176,6 @@ namespace Assets.Serialization
 
             // You've got the id # of the object.  Are we done now?
             // throw new NotImplementedException("Fill me in");
-            
             if (ReadHash.ContainsKey(id)) {
                 return ReadHash[id];
             } 
@@ -158,7 +185,7 @@ namespace Assets.Serialization
             if (End)
                 throw new EndOfStreamException($"Stream ended after reference to unknown ID {id}");
             var c = GetChar();
-            if (c != '{')
+            if (c != '{' )
                 throw new Exception($"Expected '{'{'}' after #{id} but instead got {c}");
 
             // There's a {.
@@ -174,8 +201,8 @@ namespace Assets.Serialization
 
             // Great!  Now what? 
             // throw new NotImplementedException("Fill me in");
-            string result = "";
-            
+            var instance = MakeInstance(type);
+
 
             // Read the fields until we run out of them
             while (!End && PeekChar != '}')
@@ -183,16 +210,12 @@ namespace Assets.Serialization
                 var (field, value) = ReadField(id);
                 // We've got a field and a value.  Now what?
                 // throw new NotImplementedException("Fill me in");
-                //if (field != "children")
-                //{
-                //    result += field + value;
-                //}
-                //else
-                //{
-                //    //ReadObject
-                //    //result += field + 
-                //}
-                result += field + value;
+                SetFieldByName(instance, field, value);
+                if (ReadHash.ContainsKey(id))
+                {
+                    ReadHash[id] = instance;
+                }
+                else ReadHash.Add(id, instance);
             }
 
             if (End)
@@ -201,9 +224,10 @@ namespace Assets.Serialization
             GetChar();  // Swallow close bracket
 
             // We're done.  Now what?
-            throw new NotImplementedException("Fill me in");
-            ReadHash.Add(id, result);
-            return result;
+            // throw new NotImplementedException("Fill me in");
+            //Debug.Log("id: " + id + ", instance:" + instance);
+            ReadHash[id] = instance;
+            return instance;
         }
     }
 }
