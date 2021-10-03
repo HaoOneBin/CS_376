@@ -202,6 +202,7 @@ namespace Assets.Serialization
             // Great!  Now what? 
             // throw new NotImplementedException("Fill me in");
             var instance = MakeInstance(type);
+            ReadHash.Add(id, instance);
 
 
             // Read the fields until we run out of them
@@ -211,11 +212,6 @@ namespace Assets.Serialization
                 // We've got a field and a value.  Now what?
                 // throw new NotImplementedException("Fill me in");
                 SetFieldByName(instance, field, value);
-                if (ReadHash.ContainsKey(id))
-                {
-                    ReadHash[id] = instance;
-                }
-                else ReadHash.Add(id, instance);
             }
 
             if (End)
