@@ -130,10 +130,13 @@ public class BarGraph : MonoBehaviour
     public static BarGraph Find(string name, Vector2 position, float min, float max)
     {
         // TODO: Check if we've already made a bargraph of this name.  If so, return it.
-        
-        //
+        if (BarGraphTable.ContainsKey(name))
+        {
+            return BarGraphTable[name];
+        }
+
         // Otherwise, we need to make a new one
-        //
+        var gObj = new GameObject();
 
         // The UI system requires that all UI widgets be inside of the GameObject that has the Canvas component.
         // So find the canvas component
@@ -142,15 +145,19 @@ public class BarGraph : MonoBehaviour
         // TODO: Instantiate Prefab and put it inside of the game object that has the canvas.
         // Set its position to position and its rotation to the magic value Quaternion.identity, which means
         // "don't rotate it".
-        var go = null;  // Change null to a call to Instantiate
+        var loadedPrefab = Resources.Load("SampleScene") as GameObject;
+        // Change null to a call to Instantiate
+        var go = GameObject.Instantiate(loadedPrefab, position, Quaternion.identity);
 
         // TODO: Name the GameObject name
-        
+        go.name = name;
 
         // TODO: Get the BarGraph component from the game object we just made
-        var bgComponent = null;  // Change null here
+        var bgComponent = (BarGraph)go.GetComponent(typeof(BarGraph));  // Change null here
 
         // TODO set bgComponent's Min and Max fields to min and max
+        bgComponent.Max = max;
+        bgComponent.Min = min;
         
         // Add the BarGraph component to the table
         BarGraphTable[name] = bgComponent;
