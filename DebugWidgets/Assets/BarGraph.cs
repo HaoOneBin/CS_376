@@ -48,7 +48,7 @@ public class BarGraph : MonoBehaviour
     void Start()
     {
         // TODO: Set the text to the name of this game object
-        
+        Text.text = gameObject.name;
         
         // This sets width to the width of the widget on screen
         var rectTransform = (RectTransform)transform;
@@ -65,7 +65,16 @@ public class BarGraph : MonoBehaviour
         //
         // Important: remember that This BarGraph component is in a different game object than the
         // Bar.  So they have different RectTransforms.  How do you get the transform for the bar?
-        
+
+        if (Min < 0)
+        {
+            var bg = Component.FindObjectOfType(typeof(BarGraph));
+            Vector3 lTemp = bg.localPosition;
+            lTemp.x /= 2;
+            bg.localPosition = lTemp;
+            signedDisplay = true;
+        }
+
     }
 
     /// <summary>
@@ -79,15 +88,24 @@ public class BarGraph : MonoBehaviour
         // If it's out of range, display it in red
         // Otherwise, use green for positive values and blue for negative ones
         var color = Color.green;
-        
+        if (value < Min || value > Max) color = Color.red;
+        else
+        {
+            if (value > 0) color = Color.green;
+            if (value < 0) color = Color.blue;
+        }
+
         // TODO: if value is out of range (less than Min, greater than Max),
         // then move it in range (set it to Min/Max) so the bar doesn't draw
         // outside the widget.
+        if (value < Min) value = Min;
+        if (value > Max) value = Max;
 
         // TODO: Call SetWidthPercent to change the width of the bar and set its color
-        
+        SetWidthPercent(value, color);
+
         // TODO: Update the text to read: {name} : {value}
-        
+        Text.text = gameObject.name + ":" + value;
     }
 
     /// <summary>
@@ -101,12 +119,23 @@ public class BarGraph : MonoBehaviour
     public void SetWidthPercent(float value, Color c)
     {
         // TODO: Set the color of the bar to c
-        
+        BarImage.color = c;
 
         // TODO: Change BarTransform.localScale so that its x component is scaled by value.
         // If we're using signedDisplay, then we also want to cut the scale by a half so we can 
         // have half the widget for positive values and half for negative ones.
         // Leave the localScale's y component as is.
+        Vector3 lTemp = BarTransform.localScale;
+        if (signedDisplay)
+        {
+            lTemp.x *= (value + 1);
+            BarTransform.localScale = lTemp;
+        }
+        else
+        {
+            lTemp.x *= value;
+            BarTransform.localScale = lTemp;
+        }
         
     }
 
@@ -135,19 +164,21 @@ public class BarGraph : MonoBehaviour
             return BarGraphTable[name];
         }
 
+        //
         // Otherwise, we need to make a new one
-        var gObj = new GameObject();
+        //
 
         // The UI system requires that all UI widgets be inside of the GameObject that has the Canvas component.
         // So find the canvas component
         var canvas = FindObjectOfType<Canvas>();
+        GameObject canvasGameObject = canvas.gameObject;
 
         // TODO: Instantiate Prefab and put it inside of the game object that has the canvas.
         // Set its position to position and its rotation to the magic value Quaternion.identity, which means
         // "don't rotate it".
-        var loadedPrefab = Resources.Load("SampleScene") as GameObject;
         // Change null to a call to Instantiate
-        var go = GameObject.Instantiate(loadedPrefab, position, Quaternion.identity);
+        var go = GameObject.Instantiate(Prefab, position, Quaternion.identity);
+        go.transform.parent = canvasGameObject.transform;
 
         // TODO: Name the GameObject name
         go.name = name;
@@ -175,7 +206,11 @@ public class BarGraph : MonoBehaviour
         get
         {
             // TODO: return prefab is null, set it to Resources.Load<GameObject>("BarGraph")
-
+            prefab = Resources.Load("SampleScene") as GameObject;
+            if (!prefab)
+            {
+                return Resources.Load<GameObject>("BarGraph");
+            }
 
             // Now that prefab isn't null, we can return it.
             return prefab;
