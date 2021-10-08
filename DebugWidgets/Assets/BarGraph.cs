@@ -66,12 +66,13 @@ public class BarGraph : MonoBehaviour
         // Important: remember that This BarGraph component is in a different game object than the
         // Bar.  So they have different RectTransforms.  How do you get the transform for the bar?
 
-        if (Min < 0)
+        if (Min < 0 )
         {
-            var bg = Component.FindObjectOfType(typeof(BarGraph));
-            Vector3 lTemp = bg.localPosition;
-            lTemp.x /= 2;
-            bg.localPosition = lTemp;
+            //var bar = rectTransform.parent.gameObject.GetComponentInChildren<Bar>();
+            //var lTemp = BarImage.transform.parent.localPosition;
+            Vector3 lTemp = BarTransform.localPosition;
+            lTemp.x = width / 2;
+            BarTransform.localPosition = lTemp;
             signedDisplay = true;
         }
 
@@ -87,7 +88,7 @@ public class BarGraph : MonoBehaviour
         // TODO: Determine the color to display it in.
         // If it's out of range, display it in red
         // Otherwise, use green for positive values and blue for negative ones
-        var color = Color.green;
+        var color = Color.clear;
         if (value < Min || value > Max) color = Color.red;
         else
         {
@@ -128,15 +129,15 @@ public class BarGraph : MonoBehaviour
         Vector3 lTemp = BarTransform.localScale;
         if (signedDisplay)
         {
-            lTemp.x *= (value + 1);
+            lTemp.x = value / 2;
             BarTransform.localScale = lTemp;
         }
         else
         {
-            lTemp.x *= value;
+            lTemp.x = value;
             BarTransform.localScale = lTemp;
         }
-        
+
     }
 
     #region Dynamic creation
