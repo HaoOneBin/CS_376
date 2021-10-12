@@ -99,8 +99,7 @@ public class BarGraph : MonoBehaviour
         // TODO: if value is out of range (less than Min, greater than Max),
         // then move it in range (set it to Min/Max) so the bar doesn't draw
         // outside the widget.
-        if (value < Min) value = Min;
-        if (value > Max) value = Max;
+        // See line 129 to line 159
 
         // TODO: Call SetWidthPercent to change the width of the bar and set its color
         SetWidthPercent(value, color);
@@ -129,12 +128,34 @@ public class BarGraph : MonoBehaviour
         Vector3 lTemp = BarTransform.localScale;
         if (signedDisplay)
         {
-            lTemp.x = value / 2;
+            if (value > Max)
+            {
+                lTemp.x = (float)0.5;
+            }
+            else if (value < Min)
+            {
+                lTemp.x = (float)-0.5;
+            }
+            else
+            {
+                lTemp.x = value / Max / 2;
+            }
             BarTransform.localScale = lTemp;
         }
         else
         {
-            lTemp.x = value;
+            if (value > Max)
+            {
+                lTemp.x = (float)1;
+            }
+            else if (value < Min)
+            {
+                lTemp.x = (float)-1;
+            }
+            else
+            {
+                lTemp.x = value / Max;
+            }
             BarTransform.localScale = lTemp;
         }
 
