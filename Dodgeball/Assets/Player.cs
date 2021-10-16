@@ -26,6 +26,28 @@ public class Player : MonoBehaviour
     /// </summary>
     public float OrbVelocity = 10;
 
+    /// <summary>
+    /// Transform from the player object
+    /// Used to find the player's position
+    /// </summary>
+    private Transform player;
+
+    /// <summary>
+    /// Our rigid body component
+    /// Used to apply forces so we can move around
+    /// </summary>
+    private Rigidbody2D rigidBody;
+
+    /// <summary>
+    /// Initialize player and rigidBody fields
+    /// </summary>
+    // ReSharper disable once UnusedMember.Local
+    void Start()
+    {
+        player = FindObjectOfType<Player>().transform;
+        rigidBody = GetComponent<Rigidbody2D>();
+    }
+
 
     /// <summary>
     /// Fire if the player is pushing the button for the Fire axis
@@ -38,6 +60,15 @@ public class Player : MonoBehaviour
     void Update()
     {
         // TODO
+        if (Input.GetAxis("Fire") > -1) {
+            // add the OrbPrefab to the right of player
+            Vector3 OrbPosition = player.right + player.position;
+            var orb = Instantiate(OrbPrefab, OrbPosition, Quaternion.identity);
+            //add velocity to the orbOrbPrefab
+            Rigidbody2D orbRB = orb.GetComponent<Rigidbody2D>();
+            orbRB.velocity = OrbVelocity * (orb.transform.position - player.position);
+        }
+        
     }
 
     /// <summary>
@@ -49,7 +80,14 @@ public class Player : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void FixedUpdate()
     {
-        // TODO
+        // Move player using joysticks
+        Vector2 PointingDirection;
+        PointingDirection.x = Input.GetAxis("Horizontal");
+        PointingDirection.y = Input.GetAxis("Vertical");
+        rigidBody.AddForce(PointingDirection * EnginePower);
+
+        // Make palyer aim
+        rigidBody.angularVelocity = Input.GetAxis("Rotate") * RotateSpeed;
     }
 
     /// <summary>

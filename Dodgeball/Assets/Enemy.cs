@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 /// <summary>
 /// Controls the behavior of an on-screen enemy.
 /// </summary>
@@ -58,6 +59,8 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private Vector2 HeadingToPlayer => OffsetToPlayer.normalized;
 
+    private float nextShootTime = 0;
+
     /// <summary>
     /// Initialize player and rigidBody fields
     /// </summary>
@@ -74,7 +77,13 @@ public class Enemy : MonoBehaviour
     // ReSharper disable once UnusedMember.Local
     void Update()
     {
-        // TODO
+        // Fire every CoolDownTime
+        if (Time.time > nextShootTime)
+        {
+            nextShootTime = Time.time + CoolDownTime;
+            Fire();
+        }
+
     }
 
     /// <summary>
@@ -83,7 +92,13 @@ public class Enemy : MonoBehaviour
     /// </summary>
     private void Fire()
     {
-        // TODO
+        // Instantiate a new OrbPrefab next to Enermy but also on the direction to OrbPrefab
+        var enermy = gameObject.transform;
+        Vector3 bulletsPosition = enermy.position + (Vector3)HeadingToPlayer;
+        var bullets = Instantiate(OrbPrefab, bulletsPosition, Quaternion.identity);
+        // Make the OrbPrefabe(bulles) move towards player
+        Rigidbody2D bulletsRB = bullets.GetComponent<Rigidbody2D>();
+        bulletsRB.velocity = OrbVelocity * HeadingToPlayer;
     }
 
     /// <summary>
