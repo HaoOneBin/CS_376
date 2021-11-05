@@ -1,5 +1,4 @@
-Sprites from:
-
+Sprites:
 Pixel Shmup (1.0)
 https://kenney.nl/assets/pixel-shmup
 Created/distributed by Kenney (www.kenney.nl)
@@ -8,3 +7,6 @@ Creation date: 09-07-2021
 Audio:
 https://freesound.org/people/themusicalnomad/sounds/253886/
 https://freesound.org/people/PaulMorek/sounds/330046/
+
+Code:
+ScoreKeeper.cs from CS376 Exercise 3 Dodge Ball
