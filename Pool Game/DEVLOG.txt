@@ -30,3 +30,19 @@
 6:00PM Nov 13 2021
 	- Added a timer and result game scene.
 	- Added game sound.
+
+7:00PM Nov 13 2021 - After-action report
+	What I originally set out to do:
+		Make a pool game that drag and shot the cue ball to hit other balls into pockets to earn points.
+	Summarize what my goals ended up being by the end
+		Made a pool game that move the cue ball to hit other balls into pockets to earn points
+	Summarize what you accomplished of those goals
+		
+	What went right?
+		Successfully implement the design and most of mechanics.
+	What went wrong?
+		Failed to implement drage and shot because of a bug.
+	What do you wish you knew at the start of the project that you know now?
+		Change the mechanics when get struggled for a bug for hours insteaed of getting deeper into it.
+	What did you learn in the process?
+		When object velocity is too high, there is a bug that it will go through another object instaed of collosion.
