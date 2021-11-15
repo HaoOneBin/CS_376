@@ -10,6 +10,8 @@
 	- Drag and shoot the cue ball to hit colorful balls into pockets to earn points.
 	- Each drag is a round.
 	- Player win the game when all balls into pocket.
+	- Core loop:
+		Locate clolorful balls, move white balls to hit colorful balls into pockets.
   - Design game aesthetic goals:
 	- Competiton: Player wants to win the game in as little time as possible.
 	- Drama: To win the game in a minimum time, players wants to move fast. But the fast the ball moves, the more

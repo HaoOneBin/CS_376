@@ -4,7 +4,6 @@ Set to 'Full HD(1920*1080)' and then start the game.
 ********************************* 
 
 Objects on the screnn:
-
 White ball is the player, which can be controlled to hit other balls. 
 Colorful balls can get into black pocket.
 White bars are edge prevents balls go out of the screen.
