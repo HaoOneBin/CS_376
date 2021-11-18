@@ -11,19 +11,33 @@
 	- Each drag is a round.
 	- Player win the game when all balls into pocket.
 	- Core loop:
-		Locate clolorful balls, move white balls to hit colorful balls into pockets.
+		Locate colorful balls, move white balls to hit colorful balls into pockets.
   - Design game aesthetic goals:
-	- Competiton: Player wants to win the game in as little time as possible.
-	- Drama: To win the game in a minimum time, players wants to move fast. But the fast the ball moves, the more
-		likely the colorful balls be hit to a uncontrolled direction, which consumes more time to win the game.
+	- Competition: 
+		Definition:
+			Player wants to win the game in as little time as possible.
+		Success:
+			Players want to win. 
+		Failure:
+			Player feel that they cannot win.
+			Player cannot measure their progress.	
+	- Drama: 
+		Definition:
+			Its central conflict creates dramatic tension.
+		Success:
+			A sense of uncertainty.
+			A sense of inevitability
+		Failure:
+			The conflict’s outcome is obvious (no uncertainty)
+			No sense of forward progress (no inevitability)
 
 1:00PM Nov 13 2021
-	- Implment the game design idea.
-	- Implment the game mechanics.
+	- Implement the game design idea.
+	- Implement the game mechanics.
 
 3:00PM Nov 13 2021
-	- Found a bug that when ball moves too fast, collosion will not happen.
-	- Tired to fixed the bug by limiting the maxinum force added to the ball to redecuces its speed.
+	- Found a bug that when ball moves too fast, collision will not happen.
+	- Tired to fixed the bug by limiting the maximum force added to the ball to reduces its speed.
 
 5:00PM Nov 13 2021
 	- Failed to fix the bug after two hours.
@@ -35,16 +49,27 @@
 
 7:00PM Nov 13 2021 - After-action report
 	What I originally set out to do:
-		Make a pool game that drag and shot the cue ball to hit other balls into pockets to earn points.
+		With aesthetic goals(competition and drama goals), make a pool game that drag and shot 
+		the cue ball to hit other balls into pockets to earn points.
 	Summarize what my goals ended up being by the end
-		Made a pool game that move the cue ball to hit other balls into pockets to earn points
+		With aesthetic goals(competition and drama goals), made a pool game that move the cue 
+		ball to hit other balls into pockets to earn points.
 	Summarize what you accomplished of those goals
-		
+		Successfully made a pool game with green table and white ball hitting colorful balls into 
+		pockets to earn points.
+		Successfully fulfill the competition goal: Player wants to win the game in as little time 
+		as possible and can feel making progress because they can see the number of colorful balls 
+		is when hitting pocket.
+		Successfully fulfill the drama goal: To win the game in a minimum time, players wants 
+		to move fast. However, due to the uncertainty of movement of colorful balls, the fast the 
+		white ball moves, the more likely the colorful balls hit to an uncontrolled direction, 
+		which consumes more time to win the game. Thus, inevitably, players would have to slow down
+		to move precisely.			
 	What went right?
 		Successfully implement the design and most of mechanics.
 	What went wrong?
-		Failed to implement drage and shot because of a bug.
+		Failed to implement drag and shot because of a bug.
 	What do you wish you knew at the start of the project that you know now?
-		Change the mechanics when get struggled for a bug for hours insteaed of getting deeper into it.
+		Change the mechanics when get struggled for a bug for hours instead of getting deeper into it.
 	What did you learn in the process?
-		When object velocity is too high, there is a bug that it will go through another object instaed of collosion.
+		When object velocity is too high, there is a bug that it will go through another object instead of collision.
