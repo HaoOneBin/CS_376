@@ -1,0 +1,21 @@
+********************************* 
+Open the 'GamePlay' scene under 'Scenes' folder. 
+Set to 'Full HD(1920*1080)' and then start the game.
+********************************* 
+
+Objects on the screnn:
+White ball is the player, which can be controlled to hit other balls. 
+Colorful balls can get into black pocket.
+White bars are edge prevents balls go out of the screen.
+Black circles are pockets.
+Main camera background is green.
+
+Goal:
+Get all colorful balls into black pocket in as little time as possible. When a colorful ball get into a black pocket, player scores.
+
+How the player scores:
+When colorful balls hit balck pockets.
+
+
+Control:
+Use WASD or arrow keys to move white balls hitting colorful balls to get into black pockets.
