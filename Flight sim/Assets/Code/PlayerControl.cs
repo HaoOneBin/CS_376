@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -87,6 +88,78 @@ public class PlayerControl : MonoBehaviour {
         playerRB.velocity = transform.forward*3;
     }
 
+    internal void FixedUpdate()
+    {
+        Steering();
+        Thrust();
+        Aerodynamics();
+    }
+
+    void Steering()
+    {
+        //var oldRoll = roll;
+        //var oldPitch = pitch;
+        //var oldYaw = yaw;
+
+        //roll = Input.GetAxis("Horizontal") * RollRange;
+        //pitch = Input.GetAxis("Vertical") * PitchRange;
+        //yaw = RotationalSpeed * Time.fixedDeltaTime * roll;
+
+        //var lerpRoll = Mathf.Lerp(oldRoll, roll, 0.01f);
+        //var lerpPitch = Mathf.Lerp(oldPitch, pitch, 0.01f);
+        //var lerpYaw = Mathf.Lerp(oldYaw, yaw, 0.01f);
+
+        //playerRB.MoveRotation(Quaternion.Euler(lerpPitch, lerpYaw, lerpRoll));
+
+
+        var newRoll = Input.GetAxis("Horizontal") * RollRange;
+        var newPitch = Input.GetAxis("Vertical") * PitchRange;
+        var newYaw = RotationalSpeed * Time.fixedDeltaTime * newRoll;
+
+        playerRB.MoveRotation(
+            Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPitch, newYaw, newRoll), 0.01f));                
+    }
+
+    void Thrust()
+    {
+        float temp = Input.GetAxis("Thrust");
+        if (0 <= temp)
+            thrust = temp * MaximumThrust; 
+        else if (temp < 0)
+            thrust = 0;
+
+        playerRB.AddForce(thrust * transform.forward);
+    }
+
+    void Aerodynamics()
+    {        
+        Vector3 x_local = transform.right;
+        Vector3 y_local = transform.up;
+        Vector3 z_local = transform.forward;
+
+        //lift force
+        //Collider[] hitColliders = Physics.OverlapSphere(LayerMask.GetMask());
+        Vector3 v_rel = -playerRB.velocity;
+        Vector3 v_forward = Vector3.Scale(v_rel, z_local);
+        Vector3 f_lift = LiftCoefficient * Vector3.Scale(Vector3.Scale(v_forward, v_forward), y_local);
+        playerRB.AddForce(f_lift);
+
+        //foward drag force
+        Vector3 sgn_v_forward = new Vector3(Math.Sign(v_forward.x), Math.Sign(v_forward.y), Math.Sign(v_forward.z));
+        Vector3 f_fd = ForwardDragCoefficient * 
+            Vector3.Scale(sgn_v_forward, Vector3.Scale(Vector3.Scale(v_forward, v_forward), z_local));
+        playerRB.AddForce(f_fd);
+
+        //vertical drag force
+        Vector3 v_up = Vector3.Scale(v_rel, y_local);
+        Vector3 sgn_v_up = new Vector3(Math.Sign(v_up.x), Math.Sign(v_up.y), Math.Sign(v_up.z));
+        Vector3 f_vd = VerticalDragCoefficient * 
+            Vector3.Scale(sgn_v_up, Vector3.Scale(Vector3.Scale(v_up, v_up), y_local));  
+        playerRB.AddForce(f_vd);
+    }
+
+
+
     /// <summary>
     /// Show game-over display
     /// </summary>
@@ -111,5 +184,28 @@ public class PlayerControl : MonoBehaviour {
             playerRB.velocity.magnitude,
             transform.position.y,
             thrust);
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        LandingPlatform landing_p = gameObject.AddComponent(typeof(LandingPlatform)) as LandingPlatform;
+        if (collision.gameObject.name == "LandingPlatform")
+        {
+            if(playerRB.velocity.magnitude <= landing_p.MaxLandingSpeed)
+                OnGameOver(true);
+            else
+                OnGameOver(false);
+        }
+        else if(collision.gameObject.name == "Target" ||
+                collision.gameObject.name == "Target (1)" ||
+                collision.gameObject.name == "Target (2)" ||
+                collision.gameObject.name == "Updrafts")
+        {
+
+        }
+        else
+        {
+            OnGameOver(false);
+        }
     }
 }
