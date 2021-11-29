@@ -97,35 +97,20 @@ public class PlayerControl : MonoBehaviour {
 
     void Steering()
     {
-        //var oldRoll = roll;
-        //var oldPitch = pitch;
-        //var oldYaw = yaw;
-
-        //roll = Input.GetAxis("Horizontal") * RollRange;
-        //pitch = Input.GetAxis("Vertical") * PitchRange;
-        //yaw = RotationalSpeed * Time.fixedDeltaTime * roll;
-
-        //var lerpRoll = Mathf.Lerp(oldRoll, roll, 0.01f);
-        //var lerpPitch = Mathf.Lerp(oldPitch, pitch, 0.01f);
-        //var lerpYaw = Mathf.Lerp(oldYaw, yaw, 0.01f);
-
-        //playerRB.MoveRotation(Quaternion.Euler(lerpPitch, lerpYaw, lerpRoll));
-
-
-        var newRoll = Input.GetAxis("Horizontal") * RollRange;
-        var newPitch = Input.GetAxis("Vertical") * PitchRange;
-        var newYaw = RotationalSpeed * Time.fixedDeltaTime * newRoll;
+        var Roll = Input.GetAxis("Horizontal") * RollRange;
+        var Pitch = Input.GetAxis("Vertical") * PitchRange;
+        var Yaw = RotationalSpeed * Time.fixedDeltaTime * Roll;
 
         playerRB.MoveRotation(
-            Quaternion.Lerp(transform.rotation, Quaternion.Euler(newPitch, newYaw, newRoll), 0.01f));                
+            Quaternion.Lerp(transform.rotation, playerRB.rotation * Quaternion.Euler(Pitch, Yaw, Roll), 0.01f));                
     }
 
     void Thrust()
     {
-        float temp = Input.GetAxis("Thrust");
-        if (0 <= temp)
-            thrust = temp * MaximumThrust; 
-        else if (temp < 0)
+        float inputThrust = Input.GetAxis("Thrust");
+        if (0 <= inputThrust)
+            thrust = inputThrust * MaximumThrust; 
+        else if (inputThrust < 0)
             thrust = 0;
 
         playerRB.AddForce(thrust * transform.forward);
@@ -152,6 +137,15 @@ public class PlayerControl : MonoBehaviour {
 
         //vertical drag force
         Vector3 v_up = Vector3.Scale(v_rel, y_local);
+
+        LayerMask UpdraftMask = LayerMask.GetMask("Updrafts");
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, 1f, UpdraftMask);
+        Updraft updraftGO = gameObject.AddComponent(typeof(Updraft)) as Updraft;
+        foreach (var hitCollider in hitColliders)
+        {
+            v_up += updraftGO.WindVelocity;
+        }
+
         Vector3 sgn_v_up = new Vector3(Math.Sign(v_up.x), Math.Sign(v_up.y), Math.Sign(v_up.z));
         Vector3 f_vd = VerticalDragCoefficient * 
             Vector3.Scale(sgn_v_up, Vector3.Scale(Vector3.Scale(v_up, v_up), y_local));  
@@ -188,10 +182,10 @@ public class PlayerControl : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        LandingPlatform landing_p = gameObject.AddComponent(typeof(LandingPlatform)) as LandingPlatform;
+        LandingPlatform landingPlatformGO = gameObject.AddComponent(typeof(LandingPlatform)) as LandingPlatform;
         if (collision.gameObject.name == "LandingPlatform")
         {
-            if(playerRB.velocity.magnitude <= landing_p.MaxLandingSpeed)
+            if(playerRB.velocity.magnitude <= landingPlatformGO.MaxLandingSpeed)
                 OnGameOver(true);
             else
                 OnGameOver(false);
